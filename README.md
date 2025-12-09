@@ -190,7 +190,7 @@ https://youtu.be/dPU1QFqGEFU
   - Azure Subscription
 
 
-- High-Level Setup Steps
+## High-Level Setup Steps
 
 1. Run Python simulator → sends data to IoT Hub
 
@@ -227,7 +227,7 @@ https://youtu.be/dPU1QFqGEFU
 
 10. Challenges and Solutions
 
-- I had some some issues with Iot HUB connection not  working but i resolved it after verifying kys and regenratig the credentials.
+- I had some some issues with Iot HUB connection not  working but i resolved it after verifying keys and regeneratig the credentials.
 - Stream analytics not outputing, but i fixed input alias and corrected JSON paths.
 -
 11. AI Tools Disclosure
