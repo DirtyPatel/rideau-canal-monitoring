@@ -1,92 +1,239 @@
-
+# Rideau Canal Real-Time Monitoring System
 Name: Dharti Patel
 
 Student ID: 040775191
 
-Course: CST8916 
+Course: CST8916 - Fall 2025
+
+1. Project Title and Description
+
+Rideau Canal Real-Time Environmental Monitoring System
+
+This project simulates a full cloud-based IoT monitoring pipeline for tracking winter conditions at multiple Rideau Canal locations. A Python-based sensor simulator sends environmental readings to Azure, where the data is processed, stored, and visualized through a web dashboard in real time.
+
+2. Student Information
+
+Name: Dharti Patel
+Student ID: 040775191
+
+Repositories
+
+Main Documentation Repo
+https://github.com/DirtyPatel/rideau-canal-monitoring/tree/main
+
+Sensor Simulation Repo
+https://github.com/DirtyPatel/rideau-canal-sensor-simulation
+
+Web Dashboard Repo
+https://github.com/DirtyPatel/rideau-canal-dashboard
+
+3. Scenario Overview
+
+- Problem Statement
+
+Winter operations teams need continuous real-time visibility into ice thickness, surface temperature, snow accumulation, and external temperature across various Rideau Canal locations.
+Because real physical sensors were not available, a virtual IoT monitoring pipeline was created to simulate this environment.
+
+- System Objectives
+
+  - Simulate realistic sensor readings for three canal locations
+
+  - Ingest data into Azure using IoT Hub
+
+  - Process and aggregate telemetry using Stream Analytics
+
+  - Store structured results in Cosmos DB
+
+  - Archive raw data using Blob Storage
+
+  - Visualize data in real-time through a web dashboard
+
+  - Deploy dashboard as a cloud-hosted application
+
+4. System Architecture
+
+- Architecture Diagram
+
+Located in architecture/architecture-diagram.png
+
+- Data Flow Explanation
+
+1) The Python sensor simulator generates readings every few seconds.
+
+2) Messages are sent to Azure IoT Hub.
+
+3) Azure Stream Analytics processes incoming data and applies a 30-second tumbling window:
+
+  - Aggregated data → Cosmos DB
+
+  - Raw unprocessed data → Blob Storage
+
+4) The web dashboard retrieves aggregated values from Cosmos DB through a Node.js backend API.
+
+5) The dashboard is hosted on Azure App Service and updates automatically.
+
+### Azure Services Used
+
+Azure IoT Hub
+Azure Stream Analytics
+Azure Cosmos DB
+Azure Blob Storage
+Azure App Service
+
+5. Implementation Overview
+
+IoT Sensor Simulation
+
+- Generates random environmental readings for:
+
+  - Dow’s Lake
+
+  - Fifth Avenue
+
+  - NAC
+
+- Sends data to IoT Hub every few seconds
+
+- Built using Python + Azure IoT Device SDK
 
 
-## Repositories
+### Azure IoT Hub Configuration
 
-- Dashboard Repo: https://github.com/DirtyPatel/rideau-canal-dashboard
+- One device registered
 
-- Sensor Simulation Repo: https://github.com/DirtyPatel/rideau-canal-sensor-simulation
+- Device connection string stored in .env
 
-- Monitoring Repo: https://github.com/DirtyPatel/rideau-canal-monitoring/tree/main
+- Acts as the ingestion point for all sensor data
 
-## Project Summary
+### Stream Analytics Job
 
-The idea was to create a basic cloud pipeline that collects sensor data from three canal locations (Dow’s Lake, Fifth Avenue, NAC). Because we don’t have actual sensors,A Python simulator was built that sends random readings to Azure.
+- Input: IoT Hub
 
-Azure services process the data and the dashboard shows the latest numbers and charts.
+- Outputs: Cosmos DB and Blob Storage
 
-This setup mimics a real monitoring system used for safety and winter maintenance.
+- Window: TumblingWindow (30 seconds)
 
-## Architecture Overview
-
-### Data Flow :
-
-Python Simulator sends JSON messages to Azure IoT Hub.
-Stream Analytics reads the messages and calculates averages every 30 seconds.
-Cosmos DB stores the processed results.
-Blob Storage saves archived results.
-
-Web Dashboard (React) fetches data from Cosmos DB and updates the UI.
-Dashboard is deployed to Azure App Service.
-
-Azure Used: IoT Hub, Stream Analytics, Cosmos DB, Blob Storage and App Service.
-
-### Components: 
-
-1. Sensor Simulator (Python)
-
-Sends random data every few seconds.
-
-Uses Azure IoT Device SDK.
-
-Example payload:
-
-{
-  "location": "DowsLake",
-  "iceThickness": 34.2,
-  "surfaceTemp": -6.1,
-  "externalTemp": -12.4,
-  "snowAccumulation": 9.8
-}
-
-2. Stream Analytics Job
-
-It reads IoT Hub messages and outputs two things:
-
-Aggregated data → Cosmos DB
-
-Raw data → Blob Storage
+- Full query is stored in stream-analytics/query.sql
 
 
-3. Cosmos DB
 
-Database name: RideauCanalDB
+### Cosmos DB Setup
 
-Container: SensorAggregations
+- Database: RideauCanalDB
 
-Partition key: /location
+- Container: SensorAggregations
 
-Stores aggregated 30-second results that the dashboard reads.
+- Partition key: /location
 
-4. Web Dashboard
+- Stores processed 30-second aggregated records
 
-Built with HTML, CSS , JavaScript and Chart.js
+### Blob Storage Configuration
 
-Shows the latest values for each location.
-Displays charts for trends.
-Polls data every few seconds.
-Hosted on Azure App Service.
+- Container stores raw incoming IoT messages
 
-### Setup:
+- Useful for auditing or long-term batch analytics
 
-Run the Python simulator (sends data to IoT Hub).
-Start Stream Analytics job.
+### Web Dashboard
 
-Confirm documents appear in Cosmos DB.
+- Built with HTML, CSS, JavaScript, Chart.js
 
-Run the React dashboard locally or deploy to App Service.
+- Backend API built using Node.js + Cosmos DB SDK
+
+- Displays:
+
+  - Latest values
+
+  - Location trends
+
+  - Real-time updates
+
+  - Polls the backend every few seconds
+
+
+### Azure App Service Deployment
+
+- Dashboard deployed as a Node.js application
+
+- Cosmos DB credentials added through App Settings
+
+- Public URL accessible once deployed
+
+6. Repositories
+
+### 1. Main Documentation Repository
+https://github.com/DirtyPatel/rideau-canal-monitoring/tree/main
+
+- **Description:** Complete project documentation, architecture, screenshots, and guides
+
+### 2. Sensor Simulation Repository
+https://github.com/DirtyPatel/rideau-canal-sensor-simulation
+
+- **Description:** IoT sensor simulator code
+
+### 3. Web Dashboard Repository
+ https://github.com/DirtyPatel/rideau-canal-dashboard
+
+- **Description:** Web dashboard application
+
+7. Demo
+
+https://youtu.be/dPU1QFqGEFU
+
+8. Setup Instructions
+
+- Prerequisites
+
+  - Python 3
+
+  - Node.js
+
+  - Azure Subscription
+
+
+- High-Level Setup Steps
+
+1. Run Python simulator → sends data to IoT Hub
+
+2. Start Stream Analytics job
+
+3. Verify Cosmos DB receives aggregated data
+
+4. Launch dashboard locally or through Azure App Service
+
+
+9. Results and Analysis
+
+- Sample Outputs
+
+  - Aggregated records visible in Cosmos DB
+
+  - Raw unprocessed JSON files in Blob Storage
+
+  - Live charts updating on dashboard
+
+- Data Analysis
+
+  - Values refresh every few seconds
+
+  - All three locations produce consistent simulated data
+
+  - Aggregations processed correctly
+
+- Performance Observations
+
+  - Stream Analytics processes messages almost instantly
+
+  - Dashboard updates smoothly without delay
+
+10. Challenges and Solutions
+
+- I had some some issues with Iot HUB connection not  working but i resolved it after verifying kys and regenratig the credentials.
+- Stream analytics not outputing, but i fixed input alias and corrected JSON paths.
+-
+11. AI Tools Disclosure
+
+AI tools (ChatGPT) used to assist with documentation formatting, grammar polishing, and troubleshooting explanations.
+
+I used it to make the python code and the strean analytics.
+
+All configuration, Azure setup, and system testing were completed by me.
